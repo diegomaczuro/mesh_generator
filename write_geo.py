@@ -22,8 +22,8 @@ def write_geo(file_name, *param):
                 out_mesh.write('\n')
                 ind_for_line = 1
                 ind_even = 0
-
-                for i in xrange((len(x))//2):
+                bridge = []
+                for i in xrange(len(x)//2):
 
                     comma = len(connection[i])-1
                     if ind_even == 1:
@@ -33,11 +33,14 @@ def write_geo(file_name, *param):
                         connect_base = connect2[::-1]
                         ind_even = 0
                         list_points = '{'
+                        bridge.append(connect_apex[0])
                     else:
                         connect_apex = connection[i]
                         connect_base = connection[i+len(x)//2]
                         ind_even = 1
                         list_points = '{1,'
+                        bridge.append(connect_base[-1])
+
                     for j in xrange(len(connect_apex)):
                         list_points = list_points + str(connect_apex[j])+', '
 
@@ -51,6 +54,16 @@ def write_geo(file_name, *param):
                         list_points = list_points + '};\n'
 
                     str_splines = 'Spline(' + str(ind_for_line) + ') = ' + list_points
+
+
                     print str_splines
                     out_mesh.write(str_splines)
                     ind_for_line += 1
+                bridge.append(bridge[0])
+
+                for i in xrange(len(bridge)-1):
+                    str_splines = 'Spline(' + str(ind_for_line) + ') = {' + str(bridge[i]) + ', ' + str(bridge[i+1]) + '};\n'
+                    print str_splines
+                    out_mesh.write(str_splines)
+                    ind_for_line += 1
+
