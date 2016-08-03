@@ -196,10 +196,13 @@ def main():
     #x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
     #write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
     #часть поверхности
-    x4, y4, z4, connection4, apex = obj1.splane_for_mesh(10, 10)
-    print x4, y4, z4, connection4
+    phi = 25
+    psi = 25
+    x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
+    x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
+    print x5, y5, z5, connection5
     print len(x4), len(connection4)
-    write_geo('mesh1', x4, y4, z4, connection4, 5, apex)
+    write_geo('mesh1', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 1)
 
 
 

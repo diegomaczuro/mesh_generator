@@ -412,9 +412,7 @@ class Model:
 
         return x3, y3, z3, x4, y4, z4, connection, gamma_color
 
-    def splane_for_mesh(self, n_phi, n_psi_base):
-        if n_phi % 2 != 1:
-            n_phi += 1
+    def splane_for_mesh_epi(self, n_phi, n_psi_base):
         phi_series = np.linspace(0, 2 * np.pi, n_phi, endpoint=True)
         psi_series = np.linspace(0, 0.5 * np.pi, n_psi_base, endpoint=True)
         psi_series2 = psi_series[::-1]
@@ -430,7 +428,6 @@ class Model:
         ind2 = 0
         ind_for_points = 2
         gamma = 0
-        gamma = 0
         rev = 0
         apex_x, apex_y, apex_z = self.multiplier(self.surfcyl_general(gamma, psi_series2[0], phi_series[0]))
         for j in xrange(1, len(phi_series)):
@@ -439,40 +436,31 @@ class Model:
                 connect[ind2][ind] = ind_for_points
                 ind += 1
                 ind_for_points += 1
-            if rev == 0:
-                x_epi.append(x)
-                y_epi.append(y)
-                z_epi.append(z)
-                rev = 1
-            else:
-                x_epi.append(x[::-1])
-                y_epi.append(y[::-1])
-                z_epi.append(z[::-1])
-                rev = 0
+
+            x_epi.append(x)
+            y_epi.append(y)
+            z_epi.append(z)
+
             ind_array.append(connect)
             ind = 0
             ind2 += 1
 
-        gamma = 0
 
         for j in xrange(1, len(phi_series)):
             for i in xrange(1, len(psi_series2)):
-                x[ind2][ind], y[ind2][ind], z[ind2][ind]  = self.multiplier(
+                x[ind2][ind], y[ind2][ind], z[ind2][ind] = self.multiplier(
                     self.surfcylbf(gamma, psi_series[i], phi_series[j]))
                 connect[ind2][ind] = ind_for_points
+
+
                 ind += 1
                 ind_for_points += 1
 
-            if rev == 0:
-                x_epi.append(x)
-                y_epi.append(y)
-                z_epi.append(z)
-                rev = 1
-            else:
-                x_epi.append(x[::-1])
-                y_epi.append(y[::-1])
-                z_epi.append(z[::-1])
-                rev = 0
+
+            x_epi.append(x)
+            y_epi.append(y)
+            z_epi.append(z)
+
             ind_array.append(connect)
             ind = 0
             ind2 += 1
@@ -480,6 +468,65 @@ class Model:
         return x, y, z, connect, [apex_x, apex_y, apex_z]
 
 
+
+    def splane_for_mesh_endo(self, n_phi, n_psi_base):
+        phi_series = np.linspace(0, 2 * np.pi, n_phi, endpoint=True)
+        psi_series = np.linspace(0, 0.5 * np.pi, n_psi_base, endpoint=True)
+        psi_series2 = psi_series[::-1]
+        x = np.zeros(((2*(len(phi_series)-1), len(psi_series)-1)))
+        y = np.zeros(((2*(len(phi_series)-1), len(psi_series)-1)))
+        z = np.zeros(((2*(len(phi_series)-1), len(psi_series)-1)))
+        connect = np.zeros(((2*(len(phi_series)-1), len(psi_series)-1)), dtype=int)
+        x_epi = []
+        y_epi = []
+        z_epi = []
+        ind_array = []
+        ind = 0
+        ind2 = 0
+        ind_for_points = 2*(len(phi_series)-1)*(len(psi_series)-1) + 3
+        gamma = 1
+
+        apex_x, apex_y, apex_z = self.multiplier(self.surfcyl_general(gamma, psi_series2[0], phi_series[0]))
+        for j in xrange(1, len(phi_series)):
+            for i in xrange(1, len(psi_series2)):
+                x[ind2][ind], y[ind2][ind], z[ind2][ind] = self.multiplier(self.surfcyl_general(gamma, psi_series2[i], phi_series[j]))
+                connect[ind2][ind] = ind_for_points
+                ind += 1
+                ind_for_points += 1
+
+            x_epi.append(x)
+            y_epi.append(y)
+            z_epi.append(z)
+
+            ind_array.append(connect)
+            ind = 0
+            ind2 += 1
+        border = np.zeros((len(phi_series)-1), dtype=int)
+        ind_border = 0
+
+        for j in xrange(1, len(phi_series)):
+            for i in xrange(1, len(psi_series2)):
+                x[ind2][ind], y[ind2][ind], z[ind2][ind] = self.multiplier(
+                    self.surfcylbf(gamma, psi_series[i], phi_series[j]))
+                connect[ind2][ind] = ind_for_points
+                if i == len(psi_series2) - 1:
+                    border[ind_border] = ind_for_points
+                    ind_border += 1
+
+                ind += 1
+                ind_for_points += 1
+
+
+            x_epi.append(x)
+            y_epi.append(y)
+            z_epi.append(z)
+
+            ind_array.append(connect)
+            ind = 0
+            ind2 += 1
+        print 'border=', border
+
+        return x, y, z, connect, [apex_x, apex_y, apex_z], border
 
 
     def surface(self, n_phi, n_psi_base, n_psi_apex, type_connection='VTK_QUAD'):
