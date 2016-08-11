@@ -57,10 +57,10 @@ class ModelData:
         self.model_num = model_num
         self.md = self.data[self.data.model_num == self.model_num]
 
-        self.s_right =  self.md['s_right'][0]
-        self.s_left  =  self.md['s_left'][0]
+        self.s_right = self.md['s_right'][0]
+        self.s_left = self.md['s_left'][0]
         self.sb_right = self.md['sb_right'][0]
-        self.sb_left =  self.md['sb_left'][0]
+        self.sb_left = self.md['sb_left'][0]
         self.h = self.md['h'][0]
         self.delta_phi1 = 3 * np.pi
         self.delta_phi2 = -2 * np.pi
@@ -132,7 +132,7 @@ class Model:
         self.shift_x = 0
         self.shift_y = 0  # Сдвиг модели по X
         self.shift_z = 0  # Сдвиг модели по Z
-        self.scale = 100  # Коэфициент растяжения модели
+        self.scale = 5 # Коэфициент растяжения модели
 
     #def multiplier(self, p):
     #    return self.md.scale * p[0] + self.md.shift_x, \
@@ -140,14 +140,14 @@ class Model:
     #           self.md.scale * p[2] + self.md.shift_z
 
     def multiplier(self, p):
-
+        #self.scale = 0.00000000001
         p_ = np.array(p) * self.scale
         if self.apex_position == None:
             return p_
 
         res = self.apex_position.translate(p_)
-        return res
-
+        x, y, z = res
+        return [round(x, 6), round(y, 6), round(z, 6)]
     def wgam(self, y):
         """ Функция задающая ход волокон на верхушке
             y : float
