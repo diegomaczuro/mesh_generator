@@ -17,6 +17,23 @@ def write_geo(file_name, *param):
     size_cell = param[11]
 
     with open(str(file_name)+'.geo', "w") as out_mesh:
+
+                str_ =  '''Mesh.CharacteristicLengthFromCurvature = 1;
+Mesh.Lloyd = 1;
+Mesh.CharacteristicLengthMin = 3;
+Mesh.CharacteristicLengthMax = 6;
+Mesh.Optimize = 1;
+Mesh.OptimizeNetgen = 1;
+
+/*Remeshing using discrete parametrization (0=harmonic_circle, 1=conformal_spectral, 2=rbf, 3=harmonic_plane, 4=convex_circle, 5=convex_plane, 6=harmonic square, 7=conformal_fe*/
+/*Default value: 4*/
+Mesh.RemeshParametrization = 7;
+
+Mesh.SurfaceFaces = 1;
+Mesh.CharacteristicLengthFactor = 0.4;
+Mesh.RemeshAlgorithm = 1;'''
+                print str_
+                out_mesh.write(str_)
                 #точки внешней поверхность
                 str_points = 'Point(1) = {' + str(apex[0]) + ', ' + str(apex[1]) + ', ' + str(apex[2]) + \
                                      ', ' + str(size_cell) + '};\n'
