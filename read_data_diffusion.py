@@ -55,7 +55,7 @@ for i in xrange(0, len1):
                 if e3[i][j][k] >= MASK_THRESHOLD:
                     valuable += 1
 
-with open('vector_field.vtk', 'w') as out_mesh:
+with open('DTMRI_DATA/Normal human/DTI060904/vector_field.vtk', 'w') as out_mesh:
 
     out_mesh.write("# vtk DataFile Version 2.0\n")
     out_mesh.write("Really cool data\n")
