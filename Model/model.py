@@ -132,7 +132,7 @@ class Model:
         self.shift_x = 0
         self.shift_y = 0  # Сдвиг модели по X
         self.shift_z = 0  # Сдвиг модели по Z
-        self.scale = 5 # Коэфициент растяжения модели
+        self.scale = 100 # Коэфициент растяжения модели
 
     #def multiplier(self, p):
     #    return self.md.scale * p[0] + self.md.shift_x, \
@@ -147,7 +147,11 @@ class Model:
 
         res = self.apex_position.translate(p_)
         x, y, z = res
-        return [round(x, 6), round(y, 6), round(z, 6)]
+        #return [round(x, 6), round(y, 6), round(z, 6)]
+        multiplier_x = 0.3*0.1
+        multiplier_y = 0.3*0.1
+        multiplier_z = 0.3*0.1
+        return x*multiplier_x, y*multiplier_y, z*multiplier_z
     def wgam(self, y):
         """ Функция задающая ход волокон на верхушке
             y : float
