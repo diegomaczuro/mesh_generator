@@ -27,7 +27,6 @@ boneLocator.SetDataSet(output)
 boneLocator.BuildLocator()
 
 
-
 #чтение данных ДТМРТ
 reader2 = vtk.vtkGenericDataObjectReader()
 reader2.SetFileName(r"DTMRI_DATA/Normal human/DTI060904/vector_field.vtk")
