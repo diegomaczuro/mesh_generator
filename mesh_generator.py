@@ -10,6 +10,9 @@ from  Model.model import *
 from sklearn.neighbors import KDTree
 from write_geo import *
 import os
+import sys
+import logging
+
 
 def write_points_model_in_file(file_name, *param):
     """Запись в файл координат точек, скаляров для каждой точки, векторов в каждой точке
@@ -121,30 +124,68 @@ def write_points_model_in_file(file_name, *param):
                     out_mesh.write("{0} {1} {2}\n".format(vector1[i], vector2[i], vector3[i]))
 
 
+def log_config(console_level):
+    """Конфигурирует вывод логгера
+    """
+    logger = logging.getLogger('simple_log')
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    if os.path.exists('default.log'):
+        os.remove('default.log')
+    fh = logging.FileHandler('default.log')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler(stream=sys.stdout)
+    ch.setLevel(console_level)
+    # create formatter and add it to the handlers
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(levelname)s:%(message)s')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # add the handlers to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
 
 
+def main():
 
-n = 20  # количество точек в разбиении для \phi
-limit_gamma0 = 20  # количество точек по \gamma0
-limit_gamma = 20  # количество точек по \gamma
+    log_config(logging.INFO)
+    logger = logging.getLogger('simple_log')
 
-obj1 = Model('./Model/test/4_slice.csv')
-obj1.md.shift_x = 0#150#140 canine
-obj1.md.shift_y = 0#165#100 canine
-obj1.md.shift_z = 0#11 * 2.27
-obj1.apex_position = default_apex_position
-phi = np.linspace(0, 2 * np.pi, n + 1)
+    logger.info(u"Запуск")
+
+    n = 20  # (dimensionless) количество точек в разбиении для \phi
+    limit_gamma0 = 20  # (dimensionless)  количество точек по \gamma0
+    limit_gamma = 20  # (dimensionless)  количество точек по \gamma
+    logging.debug("n, limit_gamma0,  limit_gamma: {0} {1} {2}".format(n, limit_gamma0,  limit_gamma))
+
+    obj1 = Model('./Model/test/4_slice.csv')
+    obj1.md.shift_x = 0 # (cm) #150#140 canine
+    obj1.md.shift_y = 0 # (cm) #165#100 canine
+    obj1.md.shift_z = 0 # (cm) #11 * 2.27
+    obj1.apex_position = default_apex_position
+    phi = np.linspace(0, 2 * np.pi, n + 1)
 
 
-phi = 50
-psi = 50
-x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
-x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
-print x5, y5, z5, connection5
-print len(x4), len(connection4)
-write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
+    phi = 50 #  (dimensionless)
+    psi = 50 #  (dimensionless)
+    x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
+    x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
 
-os.chdir('MESH_DATA_MODEL/Normal human/DTI060904/')
-os.system("ls -l")
-os.system("gmsh -2 mesh.geo -o mesh.stl")
-os.system("tetgen -Ra0.0003pqkgo/71 mesh.stl")
+    logger.debug("x5, y5, z5, connection5: {0} {1} {2} {3}".format(x5, y5, z5, connection5))
+    logger.debug("len(x4), len(connection4): {0} {1}".format(len(x4), len(connection4)))
+
+    logger.info(u"Запись geo файла...")
+    write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
+
+    logger.info(u"Построение сетки...")
+    os.chdir('MESH_DATA_MODEL/Normal human/DTI060904/')
+    os.system("ls -l")
+    os.system("gmsh -2 mesh.geo -o mesh.stl")
+    os.system("tetgen -Ra0.0003pqkgo/71 mesh.stl")
+
+    logger.info(u"Программа успешно завершилась. Проверьте вывод gmsh и tetgen")
+
+
+if __name__ == "__main__":
+    main()
