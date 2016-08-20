@@ -127,7 +127,7 @@ def main():
     limit_gamma0 = 20  # количество точек по \gamma0
     limit_gamma = 20  # количество точек по \gamma
 
-    obj1 = Model('./Model/test/4_slice_ok.csv')
+    obj1 = Model('./Model/test/4_slice.csv')
     obj1.md.shift_x = 0#150#140 canine
     obj1.md.shift_y = 0#165#100 canine
     obj1.md.shift_z = 0#11 * 2.27
@@ -137,12 +137,12 @@ def main():
     #x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
 
     tree = None
-    with open('./Model/test/full_tree.pkl', 'rb') as fl:
+    with open('./Model/test/full_tree(1).pkl', 'rb') as fl:
         tree = pickle.load(fl)
     dist, ind = tree.query((11, 1, 0), k=1)
 
     vectors_data = None
-    with open('./Model/test/full_vector.pkl', 'rb') as fl:
+    with open('./Model/test/full_vector(1).pkl', 'rb') as fl:
         vectors_data = pickle.load(fl)
 
     angle_mas = []
@@ -192,17 +192,17 @@ def main():
     #x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(20, 20, 20, tree1, results_vectors)
     #write_points_model_in_file('my_surface_vol', x2, y2, z2, v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
 #
-    ###поверхность без сетки
+    ##поверхность без сетки
     #x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
     #write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
     #часть поверхности
-    phi = 25
-    psi = 25
+    phi = 50
+    psi = 50
     x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
     x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
     print x5, y5, z5, connection5
     print len(x4), len(connection4)
-    write_geo('mesh1', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 1)
+    write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
 
 
 
