@@ -147,4 +147,4 @@ write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4
 os.chdir('MESH_DATA_MODEL/Normal human/DTI060904/')
 os.system("ls -l")
 os.system("gmsh -2 mesh.geo -o mesh.stl")
-os.system("tetgen -Ra0.001pqkgo/72 mesh.stl")
+os.system("tetgen -Ra0.0003pqkgo/71 mesh.stl")
