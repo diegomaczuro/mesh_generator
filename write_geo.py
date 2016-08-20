@@ -31,7 +31,8 @@ Mesh.RemeshParametrization = 7;
 
 Mesh.SurfaceFaces = 1;
 Mesh.CharacteristicLengthFactor = 0.4;
-Mesh.RemeshAlgorithm = 1;'''
+Mesh.RemeshAlgorithm = 1;
+'''
                 print str_
                 out_mesh.write(str_)
                 #точки внешней поверхность
