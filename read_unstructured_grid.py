@@ -94,6 +94,12 @@ def vector_in_centre_thetraedr(dist, v1, v2, v3, v4):
     vz = z/np.linalg.norm(vec)
     return vx, vy, vz
 
+def write_axi(N, array_vectors):
+    with open('MESH_DATA_MODEL/Normal human/DTI060904/mesh.axi', 'w') as out_mesh:
+        out_mesh.write(str(N) + '\n')
+        for i in xrange(N):
+            out_mesh.write('{0} {1} {2}\n'.format(array_vectors[i][0], array_vectors[i][1], array_vectors[i][2]))
+
 
 #чтение данных vtk с сеткой, создание октанта
 file_name = "MESH_DATA_MODEL/Normal human/DTI060904/mesh.1.vtk"
@@ -127,7 +133,7 @@ print a
 ele_array = read_ele_file()
 s =  ele_array[0]
 a = s.split("  ")
-
+N = len(ele_array) - 1
 l = len(ele_array)
 s2 = ele_array[1]
 b = s2.split(' ')
@@ -141,9 +147,10 @@ b2 = s3.split(' ')
 #print int(b2[3]), float(b2[7]), float(b2[9]), float(b2[11])
 
 
-cell_array = np.zeros((len(ele_array)))
-cell_points = np.zeros((len(ele_array), 3))
-print cell_points
+cell_array = np.zeros((N))
+cell_vectors = np.zeros((N, 3))
+
+
 
 n = 0
 for i in xrange(len(coord_points_data)):
@@ -152,6 +159,15 @@ for i in xrange(len(coord_points_data)):
         #print a
         n += 1
         cell_array[a] += 1
+        cell_vectors[a] = cell_vectors[a] + coord_points_data[i]
+        #print cell_vectors[a]
+
+for i in xrange(N):
+    if cell_array[i] != 0:
+        vec_help = cell_vectors[i]/float(cell_array[i])
+        cell_vectors[i] = vec_help/np.linalg.norm(vec_help)
+        #print cell_vectors[a]
+
 
 
 
@@ -159,7 +175,7 @@ for i in xrange(len(coord_points_data)):
 
 p = 0
 #print cell_array
-for i in xrange(len(cell_array)):
+for i in xrange(N):
     if cell_array[i] != 0:
          p += 1
 
@@ -167,10 +183,11 @@ for i in xrange(len(cell_array)):
 #print p*100/l, '%'
 #print int(a[0])
 
-for i in xrange(len(cell_array)):
-    if cell_array[i] != 0:
+for i in xrange(N):
+    if cell_array[i] == 0:
 
         numb_cell1, numb_cell2, numb_cell3, numb_cell4 = list_cells(ele_array[i])
+
 
         x1, y1, z1 = list_points(node_array[numb_cell1])
         x2, y2, z2 = list_points(node_array[numb_cell2])
@@ -179,14 +196,16 @@ for i in xrange(len(cell_array)):
 
         x, y, z = coord_centre_of_thetraedra([x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4])
         dist, ind = tree.query((x, y, z), k=4)
-        print dist[0], ind[0]
+        #print dist[0], ind[0]
         vx, vy, vz = vector_in_centre_thetraedr(dist[0], coord_points_data[ind[0][0]],
                                                          coord_points_data[ind[0][1]],
                                                          coord_points_data[ind[0][2]],
                                                          coord_points_data[ind[0][3]])
-        cell_points[i][0] = vx
-        cell_points[i][1] = vy
-        cell_points[i][2] = vz
+        cell_vectors[i][0] = vx
+        cell_vectors[i][1] = vy
+        cell_vectors[i][2] = vz
 
 print ele_array[1], list_cells(ele_array[1])
 print node_array[0], list_points(node_array[0])
+
+write_axi(N, cell_vectors)
