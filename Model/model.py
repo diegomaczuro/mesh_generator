@@ -148,10 +148,10 @@ class Model:
         res = self.apex_position.translate(p_)
         x, y, z = res
         #return [round(x, 6), round(y, 6), round(z, 6)]
-        multiplier_x = 0.3*0.1
-        multiplier_y = 0.3*0.1
-        multiplier_z = 0.3*0.1*0.98765
-        return x*multiplier_x, y*multiplier_y, z*multiplier_z
+        multiplier_x = 0.3*0.1  # (dimensionless)
+        multiplier_y = 0.3*0.1  # (dimensionless)
+        multiplier_z = 0.8*0.1  # (dimensionless)
+        return x*multiplier_x, y*multiplier_y, z*multiplier_z # dimensionless -> cm
     def wgam(self, y):
         """ Функция задающая ход волокон на верхушке
             y : float

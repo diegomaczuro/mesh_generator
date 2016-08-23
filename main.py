@@ -9,6 +9,7 @@ import pandas as pd
 from  Model.model import *
 from sklearn.neighbors import KDTree
 from write_geo import *
+import logging
 
 def write_points_model_in_file(file_name, *param):
     """Запись в файл координат точек, скаляров для каждой точки, векторов в каждой точке
@@ -123,14 +124,14 @@ def write_points_model_in_file(file_name, *param):
 
 def main():
 
-    n = 20  # количество точек в разбиении для \phi
-    limit_gamma0 = 20  # количество точек по \gamma0
-    limit_gamma = 20  # количество точек по \gamma
+    n = 20  # (dimensionless) количество точек в разбиении для \phi
+    limit_gamma0 = 20  # (dimensionless) количество точек по \gamma0
+    limit_gamma = 20  # (dimensionless) количество точек по \gamma
 
     obj1 = Model('./Model/test/4_slice.csv')
-    obj1.md.shift_x = 0#150#140 canine
-    obj1.md.shift_y = 0#165#100 canine
-    obj1.md.shift_z = 0#11 * 2.27
+    obj1.md.shift_x = 0 # (cm)  #150#140 canine
+    obj1.md.shift_y = 0 # (cm)  #165#100 canine
+    obj1.md.shift_z = 0 # (cm)  11 * 2.27
     obj1.apex_position = default_apex_position
     phi = np.linspace(0, 2 * np.pi, n + 1)  # TODO это является неверным. Последняя точка должна быть без щели
     # x, y, z - координаты точки      v1, v2, v3 - вектора
@@ -196,8 +197,8 @@ def main():
     #x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
     #write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
     #часть поверхности
-    phi = 50
-    psi = 50
+    phi = 50  # (dimensionless)
+    psi = 50  # (dimensionless)
     x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
     x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
     print x5, y5, z5, connection5

@@ -81,3 +81,4 @@ with open('DTMRI_DATA/Normal human/DTI060904/vector_field.vtk', 'w') as out_mesh
             for k in xrange(0, len3):
                 if e3[i][j][k] >= MASK_THRESHOLD:
                     out_mesh.write("{0} {1} {2}\n".format(b11[i][j][k], b12[i][j][k], b13[i][j][k]))
+
