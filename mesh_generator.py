@@ -180,7 +180,6 @@ def main():
 
     logger.info(u"Построение сетки...")
     os.chdir('MESH_DATA_MODEL/Normal human/DTI060904/')
-    os.system("ls -l")
     os.system("gmsh -2 mesh.geo -o mesh.stl")
     os.system("tetgen -Ra0.0003pqkgo/71 mesh.stl")
 
