@@ -1,13 +1,14 @@
 # coding=utf-8
 __author__ = 'Anastasia Bazhutina'
+
 from vtk import *
-from vtk.util.misc import vtkGetDataRoot
 from vtk.util.numpy_support import vtk_to_numpy
 from sklearn.neighbors import KDTree
 from const import *
 import numpy as np
 import logging
 import os
+
 
 def read_ele_file():
 #функция чтения .ele файла
@@ -124,9 +125,9 @@ def write_axi(N, array_vectors):
         for i in xrange(N):
             out_mesh.write('{0} {1} {2}\n'.format(array_vectors[i][0], array_vectors[i][1], array_vectors[i][2]))
 
+
 #функция создает и записывает .axi файл, в котором для каждой тетраэдральной ячейки указан вектор, лежащий в центре ячейки
 def create_axi_file():
-
     logger = logging.getLogger('simple_log')
     #чтение данных vtk с сеткой, создание октанта
     file_name = os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME + '.1.vtk')
@@ -137,7 +138,6 @@ def create_axi_file():
     boneLocator = vtk.vtkCellLocator()
     boneLocator.SetDataSet(output)
     boneLocator.BuildLocator()
-
 
     #чтение данных ДТМРТ
     reader2 = vtkUnstructuredGridReader()

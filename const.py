@@ -42,9 +42,9 @@ MESH_DATA_FOLDER = 'MESH_DATA_MODEL' #сдесь лежит построенна
 CSV_FOLDER = 'CSV_DATA'#тут данные csv
 
 
-FILE_DATA_VTK = 'full_vector_field(1).vtk'
-FILE_TREE = 'full_tree(1).pkl'
-FILE_VECTOR = 'full_vector(1).pkl'
+FILE_DATA_VTK = 'full_vector_field.vtk'
+FILE_TREE = 'full_tree.pkl'
+FILE_VECTOR = 'full_vector.pkl'
 
 FILE_BORDER = 'lv_border.npy'
 FILE_EPI = 'lv_border_epi.npy'
@@ -61,3 +61,4 @@ PARAM_NAME = 'template.param_set_semen3'
 
 MESH_FILE_NAME = 'mesh'#имя файла с сеткой
 VECTOR_FIELD  = 'vector_field.vtk'
+

@@ -135,75 +135,75 @@ def main():
     obj1.apex_position = default_apex_position
     phi = np.linspace(0, 2 * np.pi, n + 1)  # TODO это является неверным. Последняя точка должна быть без щели
     # x, y, z - координаты точки      v1, v2, v3 - вектора
-    #x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
+    x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
 
     tree = None
-    with open('./Model/test/full_tree(1).pkl', 'rb') as fl:
+    with open('./Model/test/full_tree.pkl', 'rb') as fl:
         tree = pickle.load(fl)
     dist, ind = tree.query((11, 1, 0), k=1)
 
     vectors_data = None
-    with open('./Model/test/full_vector(1).pkl', 'rb') as fl:
+    with open('./Model/test/full_vector.pkl', 'rb') as fl:
         vectors_data = pickle.load(fl)
 
     angle_mas = []
     epsilon_mas = []
 
-    #for i in xrange(len(x)):
-    #    dist, ind = tree.query((x[i], y[i], z[i]), k=1)
-    #    vector_in_data = vectors_data[ind[0][0]]
-    #    angle_min = fiber_angle(np.array([v1[i], v2[i], v3[i]]),
-    #                            np.array([vector_in_data[0], vector_in_data[1], vector_in_data[2]]))
-    #    angle_mas.append(angle_min)
-    #    epsilon_mas.append(dist[0][0])
+    for i in xrange(len(x)):
+        dist, ind = tree.query((x[i], y[i], z[i]), k=1)
+        vector_in_data = vectors_data[ind[0][0]]
+        angle_min = fiber_angle(np.array([v1[i], v2[i], v3[i]]),
+                                np.array([vector_in_data[0], vector_in_data[1], vector_in_data[2]]))
+        angle_mas.append(angle_min)
+        epsilon_mas.append(dist[0][0])
 #
-    #write_points_model_in_file('points_for_verification_human', x, y, z, v1, v2, v3, angle_mas, [], [], 'VTK_QUAD')# angle_mas)
+    write_points_model_in_file('points_for_verification_human', x, y, z, v1, v2, v3, angle_mas, [], [], 'VTK_QUAD')# angle_mas)
 #
-    #mean = np.mean(angle_mas)
-    #std = np.std(angle_mas)
+    mean = np.mean(angle_mas)
+    std = np.std(angle_mas)
 #
-    #print np.mean(angle_mas)
-    #print np.std(angle_mas)
+    print np.mean(angle_mas)
+    print np.std(angle_mas)
 #
-    #general_count = len(angle_mas)
-    #two_sigma_count = 0
+    general_count = len(angle_mas)
+    two_sigma_count = 0
 #
-    #for a in angle_mas:
-    #    if (a < mean - (2*std)) or (a > mean + (2*std)):
-    #        two_sigma_count+=1
+    for a in angle_mas:
+        if (a < mean - (2*std)) or (a > mean + (2*std)):
+            two_sigma_count+=1
 #
-    #print str((float(two_sigma_count)/float(general_count))*100) + " %"
+    print str((float(two_sigma_count)/float(general_count))*100) + " %"
 #
-    #with open('result_slice_8_human.csv', 'w') as fl:
-    #    fl.write(str(np.mean(angle_mas)))
-    #    fl.write(';')
-    #    fl.write(str(np.std(angle_mas)))
-    #    fl.write(';')
-    #    fl.write(str((float(two_sigma_count)/float(general_count))*100))
+    with open('result_slice_8_human.csv', 'w') as fl:
+        fl.write(str(np.mean(angle_mas)))
+        fl.write(';')
+        fl.write(str(np.std(angle_mas)))
+        fl.write(';')
+        fl.write(str((float(two_sigma_count)/float(general_count))*100))
 #
-    #plt.hist(angle_mas, bins=100)
-    #plt.savefig('hist_8_slice_human.png')
+    plt.hist(angle_mas, bins=100)
+    plt.savefig('hist_8_slice_human.png')
 #
     ##тут построение streamlines
-    #results_points = map(lambda x, y, z: [x, y, z], x, y, z)
-    #results_vectors = map(lambda x, y, z: [x, y, z], v1, v2, v3)
+    results_points = map(lambda x, y, z: [x, y, z], x, y, z)
+    results_vectors = map(lambda x, y, z: [x, y, z], v1, v2, v3)
 #
-    #tree1 = KDTree(results_points, leaf_size=1, metric='euclidean')
+    tree1 = KDTree(results_points, leaf_size=1, metric='euclidean')
     ##поверхность с сеткой внутри
-    #x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(20, 20, 20, tree1, results_vectors)
-    #write_points_model_in_file('my_surface_vol', x2, y2, z2, v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
+    x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(20, 20, 20, tree1, results_vectors)
+    write_points_model_in_file('my_surface_vol', x2, y2, z2, v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
 #
     ##поверхность без сетки
-    #x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
-    #write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
+    x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
+    write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
     #часть поверхности
-    phi = 50  # (dimensionless)
-    psi = 50  # (dimensionless)
-    x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
-    x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
-    print x5, y5, z5, connection5
-    print len(x4), len(connection4)
-    write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
+    #phi = 50  # (dimensionless)
+    #psi = 50  # (dimensionless)
+    #x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
+    #x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
+    #print x5, y5, z5, connection5
+    #print len(x4), len(connection4)
+    #write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
 
 
 

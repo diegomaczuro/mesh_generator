@@ -5,7 +5,11 @@ import scipy.io
 from sklearn.neighbors import KDTree
 import pickle
 from const import *
-
+import os
+from vtk import *
+from vtk.util.numpy_support import vtk_to_numpy
+from sklearn.neighbors import KDTree
+import logging
 
 
 each_x_y = 1
@@ -43,7 +47,10 @@ len_ = len1*len2*len3
 results_points = np.array([])
 results_vectors = np.array([])
 
-print "Read finish"
+logger = logging.getLogger('simple_log')
+logger.info(u"Read finish...")
+
+
 
 multiply_x = 0.3*0.1 # Коэфициент переводящий в см
 multiply_y = 0.3*0.1
@@ -82,3 +89,22 @@ with open('DTMRI_DATA/Normal human/DTI060904/vector_field.vtk', 'w') as out_mesh
                 if e3[i][j][k] >= MASK_THRESHOLD:
                     out_mesh.write("{0} {1} {2}\n".format(b11[i][j][k], b12[i][j][k], b13[i][j][k]))
 
+
+ #чтение данных ДТМРТ
+reader = vtkUnstructuredGridReader()
+way = os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, VECTOR_FIELD)
+reader.SetFileName(way)
+reader.Update()
+ug = reader.GetOutput()
+points2 = ug.GetPoints()
+coords_vectors_data = vtk_to_numpy(ug.GetPointData().GetArray('DTMRIFiberOrientation'))
+coord_points_data = vtk_to_numpy(points2.GetData())
+#построение дерева
+tree = KDTree(coord_points_data, leaf_size=5, metric='euclidean')
+
+
+with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_TREE), 'wb') as fl:
+    pickle.dump(tree, fl)
+
+with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_VECTOR), 'wb') as fl:
+    pickle.dump(coords_vectors_data, fl)

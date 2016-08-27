@@ -181,7 +181,7 @@ def main():
               x5, y5, z5, connection5, apex2, border1, 0.2)
 
     logger.info(u"Построение сетки...")
-    os.chdir(os.path.join(MESH_DATA_FOLDER , OBJECT, FOLDER_NAME))
+    os.chdir(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME))
     os.system("gmsh -2 " + MESH_FILE_NAME + ".geo -o " + MESH_FILE_NAME + ".stl")
     os.system("tetgen -Ra0.0003pqkgo/71 " + MESH_FILE_NAME + ".stl")
 
