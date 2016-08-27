@@ -2,7 +2,6 @@
 from skew_slicer import ApexPosition
 import numpy as np
 
-Z_MULT = 2.27
 
 SLICE_X = 114 # 140
 SLICE_Y = 147 # 100
@@ -36,6 +35,13 @@ default_apex_position = ApexPosition.init_from_line(np.array([81.6, 149.98, -1.4
 #default_apex_position.A = np.array([0.90695487, 0.21929534, -0.35594468])
 #default_apex_position.B = np.array([-0.21583179, 0.97708654, 0.03712686])
 
+OBJECT = 'Normal human'#'canine/Normal canine'
+FOLDER_NAME = 'DTI060904' #имя нужной папки с DYMRT
+VTK_DATA_FOLDER = 'DTMRI_DATA' #сдесь лежат данные DTMRT
+MESH_DATA_FOLDER = 'MESH_DATA_MODEL' #сдесь лежит построенная сетка
+CSV_FOLDER = 'CSV_DATA'#тут данные csv
+
+
 FILE_DATA_VTK = 'full_vector_field(1).vtk'
 FILE_TREE = 'full_tree(1).pkl'
 FILE_VECTOR = 'full_vector(1).pkl'
@@ -44,7 +50,7 @@ FILE_BORDER = 'lv_border.npy'
 FILE_EPI = 'lv_border_epi.npy'
 FILE_ENDO = 'lv_border_endo.npy'
 
-FILE_CSV = '8_slice.csv'#'result.csv'
+FILE_CSV = '4_slice.csv'#'result.csv'
 FILE_CSV_TEST = './step300/test_result.csv'  # !!!!!
 
 FILE_HIST = 'hist.png'
@@ -52,3 +58,6 @@ FILE_MODEL_VTK = 'model3.vtk'
 FILE_RESULT = 'result.csv'
 
 PARAM_NAME = 'template.param_set_semen3'
+
+MESH_FILE_NAME = 'mesh'#имя файла с сеткой
+VECTOR_FIELD  = 'vector_field.vtk'

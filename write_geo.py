@@ -1,6 +1,8 @@
 # -*- coding: utf_8 -*-
 __author__ = 'Aastasia Bazhutina'
 import numpy as np
+import logging
+logger = logging.getLogger('simple_log')
 
 def write_geo(file_name, *param):
     x = param[0]
@@ -33,7 +35,7 @@ Mesh.SurfaceFaces = 1;
 Mesh.CharacteristicLengthFactor = 0.4;
 Mesh.RemeshAlgorithm = 1;
 '''
-                print str_
+                logger.debug(str_)
                 out_mesh.write(str_)
                 #точки внешней поверхность
                 str_points = 'Point(1) = {' + str(apex[0]) + ', ' + str(apex[1]) + ', ' + str(apex[2]) + \
