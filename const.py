@@ -56,6 +56,9 @@ FILE_CSV_TEST = './step300/test_result.csv'  # !!!!!
 FILE_HIST = 'hist.png'
 FILE_MODEL_VTK = 'model.vtk'
 FILE_RESULT = 'result.csv'
+FILE_SURFACE = 'surface.vtk'
+FILE_SURFACE_WITH_MESH = 'surface_with_mesh.vtk'
+
 
 PARAM_NAME = 'template.param_set_semen3'
 
