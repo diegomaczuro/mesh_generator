@@ -11,14 +11,14 @@ import os
 
 def read_ele_file():
 #функция чтения .ele файла
-    with open(MESH_DATA_FOLDER + '/' + OBJECT + '/' + FOLDER_NAME + '/' + MESH_FILE_NAME + '.1.ele') as my_file:
+    with open(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME + '.1.ele')) as my_file:
         ele_array = my_file.readlines()
     return ele_array[1:]
 
 
 def read_node_file():
     #функция чтения .node файла
-    with open(MESH_DATA_FOLDER + '/' + OBJECT + '/' + FOLDER_NAME + '/' + MESH_FILE_NAME + '.1.node') as my_file:
+    with open(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME + '.1.node')) as my_file:
         node_array = my_file.readlines()
     return node_array
 
@@ -119,7 +119,7 @@ def vector_in_centre_thetraedr(dist, v1, v2, v3, v4):
 
 def write_axi(N, array_vectors):
     #функция записи .axi файла
-    with open(MESH_DATA_FOLDER + '/' + OBJECT + '/' + FOLDER_NAME + '/' + MESH_FILE_NAME + '.axi', 'w') as out_mesh:
+    with open(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME + '.axi'), 'w') as out_mesh:
         out_mesh.write(str(N) + '\n')
         for i in xrange(N):
             out_mesh.write('{0} {1} {2}\n'.format(array_vectors[i][0], array_vectors[i][1], array_vectors[i][2]))
@@ -134,9 +134,6 @@ def create_axi_file():
     reader.SetFileName(file_name)
     reader.Update()  # Needed because of GetScalarRange
     output = reader.GetOutput()
-    points = output.GetPoints()
-    scalar_range = output.GetScalarRange()
-    VTK_DATA_ROOT = vtkGetDataRoot()
     boneLocator = vtk.vtkCellLocator()
     boneLocator.SetDataSet(output)
     boneLocator.BuildLocator()
@@ -145,7 +142,6 @@ def create_axi_file():
     #чтение данных ДТМРТ
     reader2 = vtkUnstructuredGridReader()
     way = os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, VECTOR_FIELD)
-    print way
     reader2.SetFileName(way)
     reader2.Update()
     ug2 = reader2.GetOutput()
