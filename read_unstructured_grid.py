@@ -141,7 +141,7 @@ def create_axi_file():
 
     #чтение данных ДТМРТ
     reader2 = vtkUnstructuredGridReader()
-    way = os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, VECTOR_FIELD)
+    way = os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_DATA_VTK)
     reader2.SetFileName(way)
     reader2.Update()
     ug2 = reader2.GetOutput()

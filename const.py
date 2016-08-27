@@ -54,11 +54,11 @@ FILE_CSV = '4_slice.csv'#'result.csv'
 FILE_CSV_TEST = './step300/test_result.csv'  # !!!!!
 
 FILE_HIST = 'hist.png'
-FILE_MODEL_VTK = 'model3.vtk'
+FILE_MODEL_VTK = 'model.vtk'
 FILE_RESULT = 'result.csv'
 
 PARAM_NAME = 'template.param_set_semen3'
 
 MESH_FILE_NAME = 'mesh'#имя файла с сеткой
-VECTOR_FIELD  = 'vector_field.vtk'
+
 

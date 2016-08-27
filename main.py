@@ -10,6 +10,7 @@ from  Model.model import *
 from sklearn.neighbors import KDTree
 from write_geo import *
 import logging
+import os
 
 def write_points_model_in_file(file_name, *param):
     """Запись в файл координат точек, скаляров для каждой точки, векторов в каждой точке
@@ -128,7 +129,7 @@ def main():
     limit_gamma0 = 20  # (dimensionless) количество точек по \gamma0
     limit_gamma = 20  # (dimensionless) количество точек по \gamma
 
-    obj1 = Model('./Model/test/4_slice.csv')
+    obj1 = Model(os.path.join(CSV_FOLDER, OBJECT, FOLDER_NAME, FILE_CSV))
     obj1.md.shift_x = 0 # (cm)  #150#140 canine
     obj1.md.shift_y = 0 # (cm)  #165#100 canine
     obj1.md.shift_z = 0 # (cm)  11 * 2.27
@@ -138,12 +139,12 @@ def main():
     x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
 
     tree = None
-    with open('./Model/test/full_tree.pkl', 'rb') as fl:
+    with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_TREE), 'rb') as fl:
         tree = pickle.load(fl)
     dist, ind = tree.query((11, 1, 0), k=1)
 
     vectors_data = None
-    with open('./Model/test/full_vector.pkl', 'rb') as fl:
+    with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_VECTOR), 'rb') as fl:
         vectors_data = pickle.load(fl)
 
     angle_mas = []
