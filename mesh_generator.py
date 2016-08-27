@@ -12,7 +12,7 @@ from write_geo import *
 import os
 import sys
 import logging
-#from read_unstructured_grid import *
+from read_unstructured_grid import *
 
 
 def write_points_model_in_file(file_name, *param):
@@ -185,9 +185,10 @@ def main():
     os.system("gmsh -2 " + MESH_FILE_NAME + ".geo -o " + MESH_FILE_NAME + ".stl")
     os.system("tetgen -Ra0.0003pqkgo/71 " + MESH_FILE_NAME + ".stl")
 
-    #logger.info(u"Подготовка к записи в .axi файл...")
-    #create_axi_file()
-    #logger.info(u"Запись в .axi файл: успешно")
+    os.chdir('../../../')
+    logger.info(u"Подготовка к записи в .axi файл...")
+    create_axi_file()
+    logger.info(u"Запись в .axi файл: успешно")
 
     logger.info(u"Программа успешно завершилась. Проверьте вывод gmsh и tetgen")
 

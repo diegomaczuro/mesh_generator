@@ -201,6 +201,7 @@ def create_axi_file():
                                                              coords_vectors_data[ind[0][1]],
                                                              coords_vectors_data[ind[0][2]],
                                                              coords_vectors_data[ind[0][3]])
+
             cell_vectors[i][0] = vx
             cell_vectors[i][1] = vy
             cell_vectors[i][2] = vz
