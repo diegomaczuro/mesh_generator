@@ -1,7 +1,5 @@
 # -*- coding: utf_8 -*-
-
 __author__ = 'Anastasia Bazhutina'
-
 from mesh_generator import *
 from write_results import *
 from read_data_diffusion import *
@@ -71,7 +69,9 @@ def main():
             angle_mas.append(angle_min)
             epsilon_mas.append(dist[0][0])
 
+        logger.info(u"Начало записи в .vtk файл модели...")
         write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_MODEL_VTK), x, y, z, v1, v2, v3, angle_mas, [], [], 'VTK_QUAD')# angle_mas)
+        logger.info(u"Завершение записи!")
 
         mean = np.mean(angle_mas)
         std = np.std(angle_mas)
@@ -108,14 +108,20 @@ def main():
         logger.info(u"Построение поверхности с сеткой")
         x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(phi_series, psi_series, gamma_series,
                                                                                        tree1, results_vectors)
+        logger.info(u"Начало записи в .vtk файл поверхности с сеткой...")
         write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_SURFACE_WITH_MESH), x2, y2, z2,
                                    v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
+        logger.info(u"Завершение записи!")
+
     if CREATE_SURFACE:
         ##поверхность без сетки
         logger.info(u"Построение поверхности")
         x3, y3, z3, connection3 = obj1.surface(phi_series, psi_series, gamma_series)
+        logger.info(u"Начало записи в .vtk файл поверхности...")
         write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_SURFACE), x3, y3, z3,
                                [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
+        logger.info(u"Завершение записи!")
+
     if CREATE_MESH:
         logger.info(u"Построение тетраэдральной сетки")
         #создание тетраэдральной сетки и задание волокна из данных DTMRT в каждом тетраэдре
