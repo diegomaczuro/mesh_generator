@@ -1,210 +1,125 @@
 # -*- coding: utf_8 -*-
+
 __author__ = 'Anastasia Bazhutina'
 
-import numpy as np
-import pickle
-import matplotlib.pylab as plt
-from const import *
-import pandas as pd
-from  Model.model import *
-from sklearn.neighbors import KDTree
-from write_geo import *
+from mesh_generator import *
+from write_results import *
+from read_data_diffusion import *
 import logging
-import os
 
-def write_points_model_in_file(file_name, *param):
-    """Запись в файл координат точек, скаляров для каждой точки, векторов в каждой точке
 
-     Parameters
-     ----------
-     file_name : str
-         file_name - имя файла для записи
-     param[0]: float
-         param[0] - координата точки (Х)
-     param[1]: float
-         param[1] - координата точки (Y)
-     param[2]: float
-         param[2] - координата точки (Z)
-     param[3]: float
-         param[3] - координата вектора (Х)
-     param[4]: float
-         param[4] - координата вектора (Y)
-     param[5]: float
-         param[5] - координата вектора (Z)
-     param[6]: float
-         param[6] - скаляр в точке (Х, Y, Z)
+def log_config(console_level):
+    """Конфигурирует вывод логгера
     """
-    point1 = param[0]
-    point2 =param[1]
-    point3 =param[2]
-    vector1 =param[3]
-    vector2 =param[4]
-    vector3 =param[5]
-    scalar =param[6]
-    connection = param[7]
-    sur = param[8]
-    type_connection = param[9]
-    len1 = len(point1)
-    len2 = len(vector1)
-    len3 = len(scalar)
-    len4 = len(connection)
-    print len3, len1, len2, len4
-
-    if sur == 'only surface':
-        with open(str(file_name)+'.vtk', "w") as out_mesh:
-            out_mesh.write("# vtk DataFile Version 2.0\n")
-            out_mesh.write("Really cool data\n")
-            out_mesh.write("ASCII\n")
-            out_mesh.write("DATASET UNSTRUCTURED_GRID\n")
-            out_mesh.write("POINTS {pcount} double\n".format(pcount=len1))
-            for i in xrange(0, len1):
-                out_mesh.write("{0} {1} {2}\n".format(point1[i], point2[i], point3[i]))
-            out_mesh.write("CELLS {pcount} {pcount2}\n".format(pcount=len4, pcount2=(len4 * 5)))
-            for j in xrange(len4):
-                if type_connection=='VTK_TRIANGLE':
-                    t_ = connection[j]
-                    out_mesh.write("3 {0} {1} {2}\n".format(t_[0], t_[1], t_[2]))
-                else:
-                    t_ = connection[j]
-                    out_mesh.write("4 {0} {1} {2} {3}\n".format(t_[0], t_[1], t_[2], t_[3]))
-            out_mesh.write("CELL_TYPES {pcount}\n".format(pcount=len4))
-            for k in xrange(len4):
-                if type_connection=='VTK_TRIANGLE':
-                    out_mesh.write("5\n")
-                else:
-                    out_mesh.write("9\n")
-
-    else:
-        with open(str(file_name)+'.vtk', 'w') as out_mesh:
-
-            out_mesh.write("# vtk DataFile Version 2.0\n")
-            out_mesh.write("Really cool data\n")
-            out_mesh.write("ASCII\n")
-            out_mesh.write("DATASET UNSTRUCTURED_GRID\n")
-            out_mesh.write("POINTS {pcount} double\n".format(pcount=len1))
-
-            for i in xrange(0, len1):
-                out_mesh.write("{0} {1} {2}\n".format(point1[i], point2[i], point3[i]))
-
-
-            if len4 != 0:
-                out_mesh.write("CELLS {pcount} {pcount2}\n".format(pcount=len4, pcount2=(len4 * 9)))
-                for j in xrange(len4):
-                    t_ = connection[j]
-
-                    out_mesh.write(
-                        "8 {0} {1} {2} {3} {4} {5} {6} {7}\n".format(t_[0], t_[1], t_[2], t_[3], t_[4], t_[5], t_[6], t_[7]))
-                out_mesh.write("CELL_TYPES {pcount}\n".format(pcount=len4))
-                for k in xrange(len4):
-                    out_mesh.write("12\n")
-
-            else:
-                out_mesh.write("CELLS {pcount} {pcount2}\n".format(pcount=len1, pcount2=(len1 * 2)))
-                for j in xrange(len1):
-                    out_mesh.write("1 {0}\n".format(j))
-                out_mesh.write("CELL_TYPES {pcount}\n".format(pcount=len1))
-                for k in xrange(len1):
-                    out_mesh.write("1\n")
-            if len3 != 0:
-                out_mesh.write("POINT_DATA {pcount}\n".format(pcount=len3))
-                #out_mesh.write("SCALARS angle_diff double\n")
-                out_mesh.write("SCALARS endo double\n")
-                out_mesh.write("LOOKUP_TABLE default\n")
-
-                for i in xrange(len3):
-                    out_mesh.write("{0}\n".format(scalar[i]))
-
-            if len2 != 0:
-                if len3 == 0:
-                    out_mesh.write("POINT_DATA {pcount}\n".format(pcount=len2))
-                out_mesh.write("VECTORS DTMRIFiberOrientation double\n")
-                for i in xrange(len2):
-                    out_mesh.write("{0} {1} {2}\n".format(vector1[i], vector2[i], vector3[i]))
-
+    logger = logging.getLogger('simple_log')
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    if os.path.exists('default.log'):
+        os.remove('default.log')
+    fh = logging.FileHandler('default.log')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler(stream=sys.stdout)
+    ch.setLevel(console_level)
+    # create formatter and add it to the handlers
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(levelname)s:%(message)s')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # add the handlers to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
 
 
 def main():
+    log_config(logging.INFO)
+    logger = logging.getLogger('simple_log')
 
-    n = 20  # (dimensionless) количество точек в разбиении для \phi
-    limit_gamma0 = 20  # (dimensionless) количество точек по \gamma0
-    limit_gamma = 20  # (dimensionless) количество точек по \gamma
+    if CREATE_DTMRI_VTK:
+        #чтение .mat файлов с данными DTMRT и построение по ним .vtk
+        logger.info(u"чтение .mat файлов с данными DTMRT и построение по ним .vtk")
+        read_data_diffusion()    
 
     obj1 = Model(os.path.join(CSV_FOLDER, OBJECT, FOLDER_NAME, FILE_CSV))
     obj1.md.shift_x = 0 # (cm)  #150#140 canine
     obj1.md.shift_y = 0 # (cm)  #165#100 canine
     obj1.md.shift_z = 0 # (cm)  11 * 2.27
     obj1.apex_position = default_apex_position
-    phi = np.linspace(0, 2 * np.pi, n + 1)  # TODO это является неверным. Последняя точка должна быть без щели
     # x, y, z - координаты точки      v1, v2, v3 - вектора
     x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
 
-    tree = None
-    with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_TREE), 'rb') as fl:
-        tree = pickle.load(fl)
-    dist, ind = tree.query((11, 1, 0), k=1)
+    if CREATE_MODEL_WITH_FIBER:
+        logger.info(u"Построение модели с волокнами")
 
-    vectors_data = None
-    with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_VECTOR), 'rb') as fl:
-        vectors_data = pickle.load(fl)
+        tree = None
+        with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_TREE), 'rb') as fl:
+            tree = pickle.load(fl)
+        dist, ind = tree.query((11, 1, 0), k=1)
 
-    angle_mas = []
-    epsilon_mas = []
+        vectors_data = None
+        with open(os.path.join(VTK_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_VECTOR), 'rb') as fl:
+            vectors_data = pickle.load(fl)
 
-    for i in xrange(len(x)):
-        dist, ind = tree.query((x[i], y[i], z[i]), k=1)
-        vector_in_data = vectors_data[ind[0][0]]
-        angle_min = fiber_angle(np.array([v1[i], v2[i], v3[i]]),
-                                np.array([vector_in_data[0], vector_in_data[1], vector_in_data[2]]))
-        angle_mas.append(angle_min)
-        epsilon_mas.append(dist[0][0])
-#
-    write_points_model_in_file('points_for_verification_human', x, y, z, v1, v2, v3, angle_mas, [], [], 'VTK_QUAD')# angle_mas)
-#
-    mean = np.mean(angle_mas)
-    std = np.std(angle_mas)
-#
-    print np.mean(angle_mas)
-    print np.std(angle_mas)
-#
-    general_count = len(angle_mas)
-    two_sigma_count = 0
-#
-    for a in angle_mas:
-        if (a < mean - (2*std)) or (a > mean + (2*std)):
-            two_sigma_count+=1
-#
-    print str((float(two_sigma_count)/float(general_count))*100) + " %"
-#
-    with open('result_slice_8_human.csv', 'w') as fl:
-        fl.write(str(np.mean(angle_mas)))
-        fl.write(';')
-        fl.write(str(np.std(angle_mas)))
-        fl.write(';')
-        fl.write(str((float(two_sigma_count)/float(general_count))*100))
-#
-    plt.hist(angle_mas, bins=100)
-    plt.savefig('hist_8_slice_human.png')
-#
-    ##тут построение streamlines
-    results_points = map(lambda x, y, z: [x, y, z], x, y, z)
-    results_vectors = map(lambda x, y, z: [x, y, z], v1, v2, v3)
-#
-    tree1 = KDTree(results_points, leaf_size=1, metric='euclidean')
-    ##поверхность с сеткой внутри
-    x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(20, 20, 20, tree1, results_vectors)
-    write_points_model_in_file('my_surface_vol', x2, y2, z2, v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
-#
-    ##поверхность без сетки
-    x3, y3, z3, connection3 = obj1.surface(10, 10, 10)
-    write_points_model_in_file('my_surface_human', x3, y3, z3, [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
-    #часть поверхности
-    #phi = 50  # (dimensionless)
-    #psi = 50  # (dimensionless)
-    #x4, y4, z4, connection4, apex1 = obj1.splane_for_mesh_epi(phi, psi)
-    #x5, y5, z5, connection5, apex2, border1 = obj1.splane_for_mesh_endo(phi, psi)
-    #print x5, y5, z5, connection5
-    #print len(x4), len(connection4)
-    #write_geo('MESH_DATA_MODEL/Normal human/DTI060904/mesh', x4, y4, z4, connection4, apex1, x5, y5, z5, connection5, apex2, border1, 0.2)
+        angle_mas = []
+        epsilon_mas = []
+
+        for i in xrange(len(x)):
+            dist, ind = tree.query((x[i], y[i], z[i]), k=1)
+            vector_in_data = vectors_data[ind[0][0]]
+            angle_min = fiber_angle(np.array([v1[i], v2[i], v3[i]]),
+                                    np.array([vector_in_data[0], vector_in_data[1], vector_in_data[2]]))
+            angle_mas.append(angle_min)
+            epsilon_mas.append(dist[0][0])
+
+        write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_MODEL_VTK), x, y, z, v1, v2, v3, angle_mas, [], [], 'VTK_QUAD')# angle_mas)
+
+        mean = np.mean(angle_mas)
+        std = np.std(angle_mas)
+
+        logger.info(np.mean(angle_mas))
+        logger.info(np.std(angle_mas))
+
+        general_count = len(angle_mas)
+        two_sigma_count = 0
+
+        for a in angle_mas:
+            if (a < mean - (2*std)) or (a > mean + (2*std)):
+                two_sigma_count+=1
+
+        logger.info(str((float(two_sigma_count)/float(general_count))*100) + " %")
+
+        with open(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_RESULT), 'w') as fl:
+            fl.write(str(np.mean(angle_mas)))
+            fl.write(';')
+            fl.write(str(np.std(angle_mas)))
+            fl.write(';')
+            fl.write(str((float(two_sigma_count)/float(general_count))*100))
+
+        plt.hist(angle_mas, bins=100)
+        plt.savefig(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_HIST))
+
+    if CREATE_SURFACE_WITH_MESH:
+        ##тут построение streamlines
+        results_points = map(lambda x, y, z: [x, y, z], x, y, z)
+        results_vectors = map(lambda x, y, z: [x, y, z], v1, v2, v3)
+
+        tree1 = KDTree(results_points, leaf_size=1, metric='euclidean')
+        ##поверхность с сеткой внутри
+        logger.info(u"Построение поверхности с сеткой")
+        x2, y2, z2, v21, v22, v23, connection, gamma_color = obj1.generate_surface_vol(phi_series, psi_series, gamma_series,
+                                                                                       tree1, results_vectors)
+        write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_SURFACE_WITH_MESH), x2, y2, z2,
+                                   v21, v22, v23, gamma_color, connection, [], 'VTK_QUAD')  # angle_mas)
+    if CREATE_SURFACE:
+        ##поверхность без сетки
+        logger.info(u"Построение поверхности")
+        x3, y3, z3, connection3 = obj1.surface(phi_series, psi_series, gamma_series)
+        write_points_model_in_file(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, FILE_SURFACE), x3, y3, z3,
+                               [], [], [], [], connection3, 'only surface', 'VTK_QUAD')# 'VTK_TRIANGLE')
+    if CREATE_MESH:
+        logger.info(u"Построение тетраэдральной сетки")
+        #создание тетраэдральной сетки и задание волокна из данных DTMRT в каждом тетраэдре
+        create_mesh()
 
 
 
