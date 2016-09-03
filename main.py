@@ -44,7 +44,8 @@ def main():
     obj1.md.shift_z = 0 # (cm)  11 * 2.27
     obj1.apex_position = default_apex_position
     # x, y, z - координаты точки      v1, v2, v3 - вектора
-    x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
+    if CREATE_MODEL_WITH_FIBER or CREATE_SURFACE_WITH_MESH:
+        x, y, z, v1, v2, v3, gamma = obj1.generate_series_points(n, limit_gamma0, limit_gamma)
 
     if CREATE_MODEL_WITH_FIBER:
         logger.info(u"Построение модели с волокнами")
