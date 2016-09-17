@@ -31,15 +31,15 @@ def create_mesh():
 
     logger.debug("x5, y5, z5, connection5: {0} {1} {2} {3}".format(x5, y5, z5, connection5))
     logger.debug("len(x4), len(connection4): {0} {1}".format(len(x4), len(connection4)))
-
-    logger.info(u"Запись geo файла...")
-    write_geo(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME), x4, y4, z4, connection4, apex1,
-              x5, y5, z5, connection5, apex2, border1, 0.2)
+    if CREATE_GEO:
+        logger.info(u"Запись geo файла...")
+        write_geo(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME, MESH_FILE_NAME), x4, y4, z4, connection4, apex1,
+                  x5, y5, z5, connection5, apex2, border1, 0.2)
 
     logger.info(u"Построение сетки...")
     os.chdir(os.path.join(MESH_DATA_FOLDER, OBJECT, FOLDER_NAME))
     os.system("gmsh -2 " + MESH_FILE_NAME + ".geo -o " + MESH_FILE_NAME + ".stl")
-    os.system("tetgen -Ra0.0003pqkgo/71 " + MESH_FILE_NAME + ".stl")
+    os.system("tetgen -Ra0.0003pqkgo/71V " + MESH_FILE_NAME + ".stl")
 
     os.chdir('../../../')
     logger.info(u"Подготовка к записи в .axi файл...")

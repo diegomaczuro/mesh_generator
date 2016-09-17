@@ -37,11 +37,15 @@ psi_series = 30
 #количество точек по gamma для сетки с волокнами
 gamma_series = 30
 
+#создание .geo файла
+CREATE_GEO = True
+phi = 70 #  (dimensionless)
+#количество точек разбиения по psi
+psi = 70 #  (dimensionless)
+
 #создание тетраэдальной сетки по модели
 CREATE_MESH = True
 #количество точек разбиения по phi
-phi = 50 #  (dimensionless)
-#количество точек разбиения по psi
-psi = 50 #  (dimensionless)
+
 
 
